@@ -15,7 +15,10 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [notificationMessage, setNotificationMessage] = useState(null);
+  const [notificationMessage, setNotificationMessage] = useState({
+    message: null,
+    type: null,
+  });
 
   const handleNameInput = (event) => setNewName(event.target.value);
   const handleNumberInput = (event) => setNewNumber(event.target.value);
@@ -42,16 +45,28 @@ const App = () => {
                   existingPerson.id === person.id ? returnedPerson : person,
                 ),
               );
-              setNotificationMessage(`updated ${existingPerson.name}`);
-              setTimeout(() => setNotificationMessage(null), 3000);
+              setNotificationMessage({
+                message: `updated ${existingPerson.name}`,
+                type: "successful",
+              });
+              setTimeout(
+                () => setNotificationMessage({ message: null, type: null }),
+                3000,
+              );
             },
           )
         : console.log("not updated");
     } else {
       PersonService.create(newPerson).then((response) => {
         setPersons(persons.concat(response));
-        setNotificationMessage(`Added ${newPerson.name}`);
-        setTimeout(() => setNotificationMessage(null), 3000);
+        setNotificationMessage({
+          message: `Added ${newPerson.name}`,
+          type: "successful",
+        });
+        setTimeout(
+          () => setNotificationMessage({ message: null, type: null }),
+          3000,
+        );
       });
     }
     setNewName("");
@@ -62,7 +77,10 @@ const App = () => {
     <div>
       <h1>Phonebook</h1>
 
-      <Notification message={notificationMessage} />
+      <Notification
+        message={notificationMessage.message}
+        type={notificationMessage.type}
+      />
 
       <Filter searchTerm={searchTerm} handleSearchInput={handleSearchInput} />
       <h1>add a new</h1>
@@ -79,6 +97,7 @@ const App = () => {
         searchTerm={searchTerm}
         persons={persons}
         setPersons={setPersons}
+        setNotificationMessage={setNotificationMessage}
       />
     </div>
   );
