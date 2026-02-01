@@ -3,6 +3,7 @@ import Filter from "./components/Filter";
 import PersonForm from "./components/PersonForm";
 import Persons from "./components/Persons";
 import PersonService from "./services/PersonService";
+import Notification from "./components/Notification";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -14,6 +15,7 @@ const App = () => {
   const [newName, setNewName] = useState("");
   const [newNumber, setNewNumber] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
+  const [notificationMessage, setNotificationMessage] = useState(null);
 
   const handleNameInput = (event) => setNewName(event.target.value);
   const handleNumberInput = (event) => setNewNumber(event.target.value);
@@ -34,17 +36,22 @@ const App = () => {
         `${newName} is already added to the phonebook, replace the old number with the new one?`,
       )
         ? PersonService.update(existingPerson, newNumber).then(
-            (returnedPerson) =>
+            (returnedPerson) => {
               setPersons(
                 persons.map((person) =>
                   existingPerson.id === person.id ? returnedPerson : person,
                 ),
-              ),
+              );
+              setNotificationMessage(`updated ${existingPerson.name}`);
+              setTimeout(() => setNotificationMessage(null), 3000);
+            },
           )
         : console.log("not updated");
     } else {
       PersonService.create(newPerson).then((response) => {
         setPersons(persons.concat(response));
+        setNotificationMessage(`Added ${newPerson.name}`);
+        setTimeout(() => setNotificationMessage(null), 3000);
       });
     }
     setNewName("");
@@ -53,9 +60,12 @@ const App = () => {
 
   return (
     <div>
-      <h2>Phonebook</h2>
+      <h1>Phonebook</h1>
+
+      <Notification message={notificationMessage} />
+
       <Filter searchTerm={searchTerm} handleSearchInput={handleSearchInput} />
-      <h2>add a new</h2>
+      <h1>add a new</h1>
       <PersonForm
         newName={newName}
         newNumber={newNumber}
@@ -64,7 +74,7 @@ const App = () => {
         handleNumberInput={handleNumberInput}
       />
 
-      <h2>Numbers</h2>
+      <h1>Numbers</h1>
       <Persons
         searchTerm={searchTerm}
         persons={persons}
