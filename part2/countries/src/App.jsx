@@ -6,7 +6,6 @@ function App() {
   const [searchTerm, setSearchTerm] = useState("");
   const [results, setResults] = useState([]);
   const [allCountries, setAllCountries] = useState([]);
-  const [foundCountry, setFoundCountry] = useState({});
 
   useEffect(() => {
     axios
@@ -20,7 +19,7 @@ function App() {
   useEffect(() => {
     setResults(
       allCountries.filter((country) =>
-        country.name.common.toLowerCase().match(searchTerm),
+        country.name.common.toLowerCase().match(searchTerm.toLowerCase()),
       ),
     );
   }, [searchTerm]);
@@ -34,7 +33,7 @@ function App() {
         <input value={searchTerm} onChange={handleSeachTermChange} />
       </div>
       <div>
-        <Results results={results} />
+        <Results results={results} setSearchTerm={setSearchTerm} />
       </div>
     </>
   );

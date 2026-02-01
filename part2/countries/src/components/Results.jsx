@@ -1,4 +1,8 @@
-const Results = ({ results }) => {
+const Results = ({ results, setSearchTerm }) => {
+  const handleViewDetails = (countryTitle) => {
+    setSearchTerm(countryTitle);
+  };
+
   if (results.length === 1) {
     const country = results[0];
     return (
@@ -8,7 +12,7 @@ const Results = ({ results }) => {
         <h2>Languages</h2>
         <ul>
           {Object.values(country.languages).map((language) => (
-            <li>{language}</li>
+            <li key={language}>{language}</li>
           ))}
         </ul>
         <img src={country.flags.png} />
@@ -20,7 +24,12 @@ const Results = ({ results }) => {
       {results.length > 10
         ? "Too many matches, specify please"
         : results.map((result) => (
-            <p key={result.name.common}>{result.name.common}</p>
+            <div key={result.name.common}>
+              {result.name.common}{" "}
+              <button onClick={() => handleViewDetails(result.name.common)}>
+                Show
+              </button>
+            </div>
           ))}
     </div>
   );
