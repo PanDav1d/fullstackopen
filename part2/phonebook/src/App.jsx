@@ -26,12 +26,27 @@ const App = () => {
       name: newName,
       number: newNumber,
     };
-    if (persons.some((person) => person.name === newName)) {
-      alert(`${newName} is already added to the phonebook`);
+
+    const existingPerson = persons.find((person) => person.name === newName);
+
+    if (existingPerson) {
+      confirm(
+        `${newName} is already added to the phonebook, replace the old number with the new one?`,
+      )
+        ? PersonService.update(existingPerson, newNumber).then(
+            (returnedPerson) =>
+              setPersons(
+                persons.map((person) =>
+                  existingPerson.id === person.id ? returnedPerson : person,
+                ),
+              ),
+          )
+        : console.log("not updated");
+    } else {
+      PersonService.create(newPerson).then((response) => {
+        setPersons(persons.concat(response));
+      });
     }
-    PersonService.create(newPerson).then((response) => {
-      setPersons(persons.concat(response));
-    });
     setNewName("");
     setNewNumber("");
   };
